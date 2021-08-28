@@ -36,6 +36,8 @@ Output:
 
 ## Installation
 
+How do I install this?
+
 ### `npm install trie-cli-myfatemi04`
 
 This is hosted in the NPM registry under `trie-cli-myfatemi04`.
@@ -43,6 +45,8 @@ This is hosted in the NPM registry under `trie-cli-myfatemi04`.
 After installing, the CLI is accessible with the command `trie-cli`.
 
 ## Testing
+
+How do I know if the Trie works?
 
 ### `trie-cli test tests.txt`
 
