@@ -8,15 +8,7 @@ import (
 )
 
 func main() {
-	// Initialize logger
-	output, err := os.OpenFile("output.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0660)
-	if err != nil {
-		// this doesn't make sense to use logger.Fatalln
-		println("FATAL: opening output.log")
-		return
-	}
-
-	logger.Init("trie", true, false, output)
+	logger.Init("trie", true, false, os.Stdout)
 
 	port := os.Getenv("PORT")
 	if port == "" {
