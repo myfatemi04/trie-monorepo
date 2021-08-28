@@ -7,6 +7,8 @@ The Trie can be searched for keys beginning with a certain prefix.
 
 ## Hosting
 
+How is the Trie hosted?
+
 The Trie server is written in Go. It is hosted on an EC2 machine on Amazon Web Services.
 
 ## CLI <--> Server
@@ -41,4 +43,60 @@ For an "error" response, the response body will be `e` with the error message im
 
 ## CLI Usage
 
+How do I use the CLI?
+
 For more information about how to use the CLI, check out the `README.md` in the `cli/` folder.
+
+## Server
+
+How does the server store the Trie?
+
+### Data Structure
+
+Each Trie object can act as a node in any part of the trie.
+Trie objects store a map of subtries and a boolean for whether a word ends at the current Trie.
+
+For example, a Trie containing the words "foo", "bar", "baz", and "fo" would have the following structure:
+
+```
+<root>
+  - f
+    - o (end of word)
+      - o (end of word)
+  - b
+    - a
+      - r (end of word)
+      - z (end of word)
+```
+
+Starting from the root, we can find all keys starting with 'f' by looking at the subtrie in the map
+corresponding with 'f'. If we want to find all keys with a given prefix, we can just find the subtrie
+corresponding to words beginning with that prefix, and list all of its keys.
+
+If we wanted to find all words beginning with "ba" in the tree, we start from the root,
+and follow the subtries corresponding to the characters "b" and "a".
+
+The node for words starting with "ba" in the above trie looks like this:
+
+```
+<root>
+ - r: subtrie
+ - z: subtrie
+```
+
+Operations such as insertion and deletion can be applied in a similar fashion.
+
+### Thread Safety
+
+All commands applied to the Trie are dispatched to a single object.
+This object has a mutex, which ensures that no two commands are applied at the same time.
+This also ensures that commands are executed in the order they arrive.
+
+### Routing
+
+The server exposes a `ServeMux()` method, which allows routes for the Trie server to be embedded
+in any Go HTTP server. This is similar to an `express.Router()`.
+
+The routes are `/ws` for handling websocket connections and `/http` for handling HTTP POST requests.
+
+Request bodies should follow the format indicated above.
