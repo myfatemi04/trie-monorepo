@@ -100,7 +100,7 @@ async function main(command, key) {
 					const prefix = key;
 					const rest = suggestion.slice(prefix.length);
 
-					console.log(`${chalk.cyanBright`${prefix}`}${rest}`);
+					console.log(`${chalk.greenBright`${prefix}`}${rest}`);
 				});
 			}
 		}
