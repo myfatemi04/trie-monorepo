@@ -16,6 +16,13 @@ Commands:
   ${triecli} ${param`complete`} ${param`<key>`}: returns all keys that start with ${param`<key>`}
   ${triecli} ${param`display`}: returns all keys in the trie
   ${triecli} ${param`reset`}: resets the trie
+  ${triecli} ${param`test`} ${param`<filename>`}: runs the test file ${param`<filename>`}
+Testing files:
+  Each test case is separated by a blank line.
+  The first line of each test case is the command to run.
+  The second line is the condition: ${chalk.cyan('EQ <value>')} or ${chalk.cyan(
+	'NE <value>'
+)}.
 
 The key can be up to 256 characters.
 `;

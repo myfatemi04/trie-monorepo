@@ -128,7 +128,15 @@ export async function run(
 }
 
 if (command === 'test') {
-	test(arg);
+	if (arg === undefined) {
+		console.error(chalk.yellow(`Please specify a file to run tests from.`));
+	} else {
+		test(arg).catch((error: Error) => {
+			console.error('Uncaught error during testing.');
+			console.error('Error message:', chalk.redBright(error.message));
+			console.error('Test file:', chalk.greenBright(arg));
+		});
+	}
 } else {
 	run(command, arg, false).catch((error: Error) => {
 		console.error('There was an error running the command.');

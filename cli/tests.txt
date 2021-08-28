@@ -1,0 +1,13 @@
+reset
+
+insert hello
+EQ true
+
+insert hey
+
+insert hellloo
+
+display
+
+complete hel
+EQ ["hello", "hey"]

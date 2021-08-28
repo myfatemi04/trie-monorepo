@@ -14,6 +14,7 @@
  */
 
 import ENDPOINT from './endpoint';
+import fetch from 'node-fetch';
 
 const CMD_INSERT = 0;
 const CMD_DELETE = 1;
