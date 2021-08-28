@@ -13,7 +13,7 @@ const assemble = require('./assemble');
 const [_node, _path, command, ...rest] = process.argv;
 const key = rest.length > 0 ? rest.join(' ') : undefined;
 
-const ENDPOINT = 'https://infinite-scrubland-01058.herokuapp.com/http';
+const ENDPOINT = 'http://ec2-54-160-222-75.compute-1.amazonaws.com:8080/http';
 
 const triecli = chalk.cyanBright`trie-cli`;
 const param = chalk.greenBright;
