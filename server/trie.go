@@ -5,45 +5,38 @@ import (
 )
 
 /*
-The Trie data structure stores a set of strings.
 Each Trie object can act as a node in any part of the trie.
-To make prefix lookups efficient, each node simply stores a map of (next character) --> (sub-trie).
+Trie objects store a map of subtries and a boolean for whether a word ends at the current Trie.
+
 For example, a Trie containing the words "foo", "bar", "baz", and "fo" would have the following structure:
 
-HEAD
-	- f
-		- o
-			- Issubtrie: true (end of "fo")
-			- o
-				- Issubtrie: true (end of "foo")
-	- b
-		- a
-			- r
-				- Issubtrie: true (end of "bar")
-			- z
-				- Issubtrie: true (end of "baz")
+```
+<root>
+  - f
+    - o (end of word)
+      - o (end of word)
+  - b
+    - a
+      - r (end of word)
+      - z (end of word)
+```
 
-This way, to find all words with a given prefix, we just follow the subtries corresponding
-to the prefix characters.
+Starting from the root, we can find all keys starting with 'f' by looking at the subtrie in the map
+corresponding with 'f'. If we want to find all keys with a given prefix, we can just find the subtrie
+corresponding to words beginning with that prefix, and list all of its keys.
 
-If we wanted to find all words beginning with "ba" in the tree, we start from HEAD,
+If we wanted to find all words beginning with "ba" in the tree, we start from the root,
 and follow the subtries corresponding to the characters "b" and "a".
 
-This yields a trie with the following structure:
+The node for words starting with "ba" in the above trie looks like this:
 
-HEAD
- - r: subtrie
- - z: subtrie
+```
+<root>
+ - r (end of word)
+ - z (end of word)
+```
 
-Now, we can just list all the keys for the subtries.
-If the current trie were also a subtrie, then we would add the prefix to the list.
-
-This method is implemented recursively.
-The base case is that the prefix is empty, in which case we return the keys of the current trie.
-Otherwise, we follow the subtrie corresponding to the first character of the prefix,
-and recursively call the function on the subtrie with the remaining characters of the prefix.
-(We must remember to prepend each of these results with the character of the subtrie that led to them)
-Then, if the current trie is the end of a word, we add the current prefix to the results.
+Operations such as insertion and deletion can be applied in a similar fashion.
 */
 type Trie struct {
 	// The map of (next character) --> (sub-trie)

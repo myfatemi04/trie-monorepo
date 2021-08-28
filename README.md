@@ -80,8 +80,8 @@ The node for words starting with "ba" in the above trie looks like this:
 
 ```
 <root>
- - r: subtrie
- - z: subtrie
+ - r (end of word)
+ - z (end of word)
 ```
 
 Operations such as insertion and deletion can be applied in a similar fashion.
