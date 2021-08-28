@@ -107,4 +107,61 @@ Request bodies should follow the format indicated above.
 
 ## Testing
 
-How do I know that the Trie works?
+How do I know if the Trie works?
+
+### `trie-cli test tests.txt`
+
+This code allows you to input a file for testing purposes.
+
+Each test case is split by a blank line.
+The first line is the command to be executed, and
+the second line is the optional condition to check
+for.
+
+Conditions can be `eq <JSON value>` or `neq <JSON value>`.
+For arrays, `eq` checks that the expected and resulting
+arrays have the same size and that all values in the expected
+array are present in the resulting array. `neq` is not supported
+for arrays.
+
+Example run-through of a test:
+
+tests.txt
+
+```
+reset
+
+insert hello
+EQ true
+
+insert hey
+
+insert hellloo
+
+display
+
+complete hel
+EQ ["hello", "hey"]
+
+```
+
+Run `trie-cli test tests.txt`
+
+Output:
+
+```
+<root> ▾
+ h ▾
+  he ▾
+   hel ▾
+    hell ▾
+     helll ▾
+      helllo ▾
+       hellloo
+     hello
+   hey
+Test 1 / 2 => OK
+Test 2 / 2 => Expected hey in results, not found
+Result: 1 / 2
+Non-test commands: 3
+```
