@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { insert, delete_, exists, complete, keys } from './protocol';
+import { insert, delete_, exists, complete, keys, reset } from './protocol';
 import display from './display';
 import fetch from 'node-fetch';
 import * as chalk from 'chalk';
@@ -32,6 +32,7 @@ Commands:
   ${triecli} ${param`exists`} ${param`<key>`}: checks if ${param`<key>`} exists
   ${triecli} ${param`complete`} ${param`<key>`}: returns all keys that start with ${param`<key>`}
   ${triecli} ${param`display`}: returns all keys in the trie
+	${triecli} ${param`reset`}: resets the trie
 
 The key can be up to 256 characters.
 `;
@@ -79,62 +80,87 @@ function assertKeyDefined(key?: string) {
  * a help message if the command is not found.
  */
 async function main(
-	command: 'insert' | 'delete' | 'exists' | 'complete' | 'display' | string,
+	command:
+		| 'insert'
+		| 'delete'
+		| 'exists'
+		| 'complete'
+		| 'display'
+		| 'reset'
+		| string,
 	key?: string
 ) {
-	if (command === 'insert') {
-		if (assertKeyDefined(key)) {
-			const result = await sendRequest(insert(key));
-			if (result) {
-				console.log('Inserted', chalk.green`${key}`);
-			} else {
-				console.log('Key', chalk.green`${key}`, 'already exists.');
+	switch (command) {
+		case 'insert':
+			if (assertKeyDefined(key)) {
+				const result = await sendRequest(insert(key));
+				if (result) {
+					console.log('Inserted', chalk.green`${key}`);
+				} else {
+					console.log('Key', chalk.green`${key}`, 'already exists.');
+				}
 			}
-		}
-	} else if (command === 'delete') {
-		if (assertKeyDefined(key)) {
-			const result = await sendRequest(delete_(key));
-			if (result) {
-				console.log('Deleted', chalk.green`${key}`);
-			} else {
-				console.log('Key', chalk.green`${key}`, 'did not not exist.');
+			break;
+		case 'delete':
+			if (assertKeyDefined(key)) {
+				const result = await sendRequest(delete_(key));
+				if (result) {
+					console.log('Deleted', chalk.green`${key}`);
+				} else {
+					console.log('Key', chalk.green`${key}`, 'did not not exist.');
+				}
 			}
-		}
-	} else if (command === 'exists') {
-		if (assertKeyDefined(key)) {
-			const result = await sendRequest(exists(key));
-			if (result) {
-				console.log(chalk.green`${key}`, 'exists.');
-			} else {
-				console.log(chalk.green`${key}`, 'does not exist.');
+			break;
+		case 'exists':
+			if (assertKeyDefined(key)) {
+				const result = await sendRequest(exists(key));
+				if (result) {
+					console.log(chalk.green`${key}`, 'exists.');
+				} else {
+					console.log(chalk.green`${key}`, 'does not exist.');
+				}
 			}
-		}
-	} else if (command === 'complete') {
-		if (assertKeyDefined(key)) {
-			const result: string[] = await sendRequest(complete(key));
-			if (result.length == 0) {
-				console.log(chalk.green`${key}`, 'is not a prefix.');
-			} else {
-				console.log(chalk.yellow`Suggestions`);
-				result.forEach(suggestion => {
-					const prefix = key;
-					const rest = suggestion.slice(prefix.length);
+			break;
+		case 'complete':
+			if (assertKeyDefined(key)) {
+				const result: string[] = await sendRequest(complete(key));
+				if (result.length == 0) {
+					console.log(chalk.green`${key}`, 'is not a prefix.');
+				} else {
+					console.log(chalk.yellow`Suggestions`);
+					result.forEach(suggestion => {
+						const prefix = key;
+						const rest = suggestion.slice(prefix.length);
 
-					console.log(`${chalk.greenBright`${prefix}`}${rest}`);
-				});
+						console.log(`${chalk.greenBright`${prefix}`}${rest}`);
+					});
+				}
 			}
-		}
-	} else if (command === 'display') {
-		const depthFirstKeys: string[] = await sendRequest(keys());
-		if (depthFirstKeys.length == 0) {
-			console.log(chalk.yellow`Trie is empty.`);
-		}
-		const trie = assemble(depthFirstKeys);
-		display(trie);
-	} else {
-		console.log(helptext);
-		process.exit(1);
+			break;
+		case 'display':
+			const depthFirstKeys: string[] = await sendRequest(keys());
+			if (depthFirstKeys.length == 0) {
+				console.log(chalk.yellow`Trie is empty.`);
+			}
+			const trie = assemble(depthFirstKeys);
+			display(trie);
+			break;
+		case 'reset':
+			const result = await sendRequest(reset());
+			if (result) {
+				console.log(chalk.yellow`Trie has been reset.`);
+			} else {
+				console.log(chalk.red`Trie could not be reset.`);
+			}
+		default:
+			console.log(helptext);
+			break;
 	}
 }
 
-main(command, key);
+main(command, key).catch((error: Error) => {
+	console.error('There was an error running the command.');
+	console.error(chalk.redBright(error.message));
+	console.error();
+	console.error('Command:' + chalk.greenBright(command));
+});

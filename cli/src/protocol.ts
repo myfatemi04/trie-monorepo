@@ -18,6 +18,7 @@ const CMD_DELETE = 1;
 const CMD_EXISTS = 2;
 const CMD_COMPLETE = 3;
 const CMD_KEYS = 4;
+const CMD_RESET = 5;
 
 /**
  * @param key The key to insert
@@ -58,4 +59,11 @@ function keys() {
 	return `${CMD_KEYS}`;
 }
 
-export { insert, delete_, exists, complete, keys };
+/**
+ * @returns The request body for the reset command
+ */
+function reset() {
+	return `${CMD_RESET}`;
+}
+
+export { insert, delete_, exists, complete, keys, reset };
