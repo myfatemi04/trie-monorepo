@@ -35,6 +35,7 @@ const (
 	CMD_EXISTS
 	CMD_COMPLETIONS
 	CMD_KEYS
+	CMD_RESET
 )
 
 const ASCII_0 = 48
@@ -51,6 +52,7 @@ Command codes:
 	2: Check if a key exists
 	3: Generate completions for a prefix
 	4: List all keys in the trie
+	5: Reset the trie
 
 Because there is only one possible argument, this protocol is fairly straightforward.
 If there is an argument, it is simply the remaining string after the first byte, which
@@ -62,6 +64,7 @@ Example Commands
 	2foo: Check if "foo" exists
 	3foo: Generate completions for "foo"
 	4: List all keys in the trie
+	5: Reset the trie
 
 */
 func (s *ThreadSafeDispatcher) DispatchRaw(message []byte) ([]byte, error) {
@@ -128,6 +131,16 @@ func (s *ThreadSafeDispatcher) DispatchRaw(message []byte) ([]byte, error) {
 		result := s.DispatchKeys()
 		return json.Marshal(result)
 
+	case CMD_RESET:
+		logger.Infof("resetting trie")
+
+		if len(message) > 1 {
+			return nil, errors.New("reset command takes no arguments")
+		}
+
+		// result: true if the reset was successful
+		result := s.DispatchReset()
+		return json.Marshal(result)
 	}
 
 	return []byte{}, errors.New("invalid command")
@@ -181,4 +194,14 @@ func (s *ThreadSafeDispatcher) DispatchKeys() []string {
 	defer s.dispatcherMutex.Unlock()
 
 	return s.trie.Keys()
+}
+
+/*
+Reset the trie (thread-safe). Returns true.
+*/
+func (s *ThreadSafeDispatcher) DispatchReset() bool {
+	s.dispatcherMutex.Lock()
+	defer s.dispatcherMutex.Unlock()
+
+	return s.trie.Reset()
 }

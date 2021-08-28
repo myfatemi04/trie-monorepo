@@ -100,3 +100,7 @@ in any Go HTTP server. This is similar to an `express.Router()`.
 The routes are `/ws` for handling websocket connections and `/http` for handling HTTP POST requests.
 
 Request bodies should follow the format indicated above.
+
+## Testing
+
+How do I know that the Trie works?

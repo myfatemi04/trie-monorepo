@@ -56,6 +56,17 @@ func NewTrie() *Trie {
 // Keys can be a maximum length of 256 characters
 const MAX_KEY_LENGTH = 256
 
+/*
+Reset the trie by removing all subtries and setting the IsEndOfWord flag to false.
+*/
+func (t *Trie) Reset() bool {
+	t.IsEndOfWord = false
+	for k := range t.Subtries {
+		delete(t.Subtries, k)
+	}
+	return true
+}
+
 // Add adds a word to the trie, returning whether there was a change
 func (t *Trie) Add(key string) (bool, error) {
 	// Verify that the key is not too long
