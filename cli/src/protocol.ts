@@ -13,6 +13,8 @@
  * 	4: keys: Get all keys in the Trie
  */
 
+import ENDPOINT from './endpoint';
+
 const CMD_INSERT = 0;
 const CMD_DELETE = 1;
 const CMD_EXISTS = 2;
@@ -64,6 +66,28 @@ function keys() {
  */
 function reset() {
 	return `${CMD_RESET}`;
+}
+
+/**
+ * Sends a request to the server.
+ *
+ * If the request fails, an error is thrown with the error message.
+ * Otherwise, the response is returned.
+ *
+ * @param body The body of the request.
+ * @returns A successful response body.
+ */
+export async function sendRequest(body: string) {
+	const response = await fetch(ENDPOINT, {
+		method: 'POST',
+		body,
+	});
+	const text = await response.text();
+	if (text.startsWith('s')) {
+		return JSON.parse(text.slice(1));
+	} else {
+		throw new Error(text.slice(1));
+	}
 }
 
 export { insert, delete_, exists, complete, keys, reset };

@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 
-import { insert, delete_, exists, complete, keys, reset } from './protocol';
-import display from './display';
-import fetch from 'node-fetch';
 import * as chalk from 'chalk';
 import assemble from './assemble';
+import display from './display';
+import { helptext } from './helptext';
+import { complete, exists, insert, keys as keys_, remove, reset } from './ops';
+import test from './test';
 
 // args are:
 // [0] where node.exe is located
@@ -13,65 +14,9 @@ import assemble from './assemble';
 // [3] key (does not exist for `keys` command)
 
 const [_node, _path, command, ...rest] = process.argv;
-const key = rest.length > 0 ? rest.join(' ') : undefined;
+const arg = rest.length > 0 ? rest.join(' ') : undefined;
 
-const ENDPOINT = 'http://ec2-54-160-222-75.compute-1.amazonaws.com:8080/http';
-
-const triecli = chalk.cyanBright`trie-cli`;
-const param = chalk.greenBright;
-
-// note: use two spaces instead of a tab
-const helptext = `\
-${chalk.yellow`trie-cli 0.0.1`}
-
-Usage:
-  ${triecli} ${param`<command>`} ${param`[key]`}
-Commands:
-  ${triecli} ${param`insert`} ${param`<key>`}: inserts ${param`<key>`}
-  ${triecli} ${param`delete`} ${param`<key>`}: deletes ${param`<key>`}
-  ${triecli} ${param`exists`} ${param`<key>`}: checks if ${param`<key>`} exists
-  ${triecli} ${param`complete`} ${param`<key>`}: returns all keys that start with ${param`<key>`}
-  ${triecli} ${param`display`}: returns all keys in the trie
-  ${triecli} ${param`reset`}: resets the trie
-
-The key can be up to 256 characters.
-`;
-
-/**
- * Sends a request to the server.
- *
- * If the request fails, an error is thrown with the error message.
- * Otherwise, the response is returned.
- *
- * @param body The body of the request.
- * @returns A successful response body.
- */
-async function sendRequest(body: string) {
-	const response = await fetch(ENDPOINT, {
-		method: 'POST',
-		body,
-	});
-	const text = await response.text();
-	if (text.startsWith('s')) {
-		return JSON.parse(text.slice(1));
-	} else {
-		throw new Error(text.slice(1));
-	}
-}
-
-/**
- * Asserts that a key is defined. Otherwise, displays a message.
- * @param key The value to check if defined.
- * @returns True if the key is defined, false otherwise.
- */
-function assertKeyDefined(key?: string) {
-	if (key === undefined) {
-		console.log(chalk.red`This command requires a key.`);
-		console.log(helptext);
-		return false;
-	}
-	return true;
-}
+const COMMANDS_REQUIRING_KEY = ['insert', 'delete', 'exists', 'complete'];
 
 /**
  * Main driver for the CLI.
@@ -79,7 +24,7 @@ function assertKeyDefined(key?: string) {
  * Runs a command (insert, delete, exists, complete, display) and displays
  * a help message if the command is not found.
  */
-async function main(
+export async function run(
 	command:
 		| 'insert'
 		| 'delete'
@@ -88,42 +33,55 @@ async function main(
 		| 'display'
 		| 'reset'
 		| string,
-	key?: string
+	key: string | undefined,
+	automated: boolean
 ) {
+	if (COMMANDS_REQUIRING_KEY.includes(command) && key === undefined) {
+		if (!automated) {
+			console.log(chalk.red(`${command} requires a key.`));
+			console.log(helptext);
+			return;
+		} else {
+			throw new Error(`${command} requires a key.`);
+		}
+	}
 	switch (command) {
-		case 'insert':
-			if (assertKeyDefined(key)) {
-				const result = await sendRequest(insert(key));
+		case 'insert': {
+			const result = await insert(key);
+			if (!automated) {
 				if (result) {
 					console.log('Inserted', chalk.green`${key}`);
 				} else {
 					console.log('Key', chalk.green`${key}`, 'already exists.');
 				}
 			}
-			break;
-		case 'delete':
-			if (assertKeyDefined(key)) {
-				const result = await sendRequest(delete_(key));
+			return result;
+		}
+		case 'delete': {
+			const result = await remove(key);
+			if (!automated) {
 				if (result) {
 					console.log('Deleted', chalk.green`${key}`);
 				} else {
 					console.log('Key', chalk.green`${key}`, 'did not not exist.');
 				}
 			}
-			break;
-		case 'exists':
-			if (assertKeyDefined(key)) {
-				const result = await sendRequest(exists(key));
+			return result;
+		}
+		case 'exists': {
+			const result = await exists(key);
+			if (!automated) {
 				if (result) {
 					console.log(chalk.green`${key}`, 'exists.');
 				} else {
 					console.log(chalk.green`${key}`, 'does not exist.');
 				}
 			}
-			break;
-		case 'complete':
-			if (assertKeyDefined(key)) {
-				const result: string[] = await sendRequest(complete(key));
+			return result;
+		}
+		case 'complete': {
+			const result = await complete(key);
+			if (!automated) {
 				if (result.length == 0) {
 					console.log(chalk.green`${key}`, 'is not a prefix.');
 				} else {
@@ -136,31 +94,45 @@ async function main(
 					});
 				}
 			}
-			break;
-		case 'display':
-			const depthFirstKeys: string[] = await sendRequest(keys());
-			if (depthFirstKeys.length == 0) {
+			return result;
+		}
+		case 'display': {
+			const keys = await keys_();
+			if (keys.length == 0) {
 				console.log(chalk.yellow`Trie is empty.`);
 			}
-			const trie = assemble(depthFirstKeys);
-			display(trie);
-			break;
-		case 'reset':
-			const result = await sendRequest(reset());
-			if (result) {
-				console.log(chalk.yellow`Trie has been reset.`);
-			} else {
-				console.log(chalk.red`Trie could not be reset.`);
+			const result = assemble(keys);
+			if (!automated) {
+				display(result);
 			}
-			break;
+			return result;
+		}
+		case 'reset': {
+			const result = reset();
+			if (!automated)
+				if (result) {
+					console.log(chalk.yellow`Trie has been reset.`);
+				} else {
+					console.log(chalk.red`Trie could not be reset.`);
+				}
+			return result;
+		}
 		default:
-			console.log(helptext);
+			if (!automated) {
+				console.log(helptext);
+			} else {
+				throw new Error(`Command ${command} not found.`);
+			}
 			break;
 	}
 }
 
-main(command, key).catch((error: Error) => {
-	console.error('There was an error running the command.');
-	console.error('Server message:', chalk.redBright(error.message));
-	console.error('Command:', chalk.greenBright(command));
-});
+if (command === 'test') {
+	test(arg);
+} else {
+	run(command, arg, false).catch((error: Error) => {
+		console.error('There was an error running the command.');
+		console.error('Server message:', chalk.redBright(error.message));
+		console.error('Command:', chalk.greenBright(command));
+	});
+}
