@@ -152,6 +152,7 @@ async function main(
 			} else {
 				console.log(chalk.red`Trie could not be reset.`);
 			}
+			break;
 		default:
 			console.log(helptext);
 			break;
