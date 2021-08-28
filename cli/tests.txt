@@ -10,4 +10,4 @@ insert hellloo
 display
 
 complete hel
-EQ ["hello", "hey"]
+EQ ["hello", "hellloo"]
