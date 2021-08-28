@@ -28,6 +28,7 @@ Command numbers:
 2: exists: Check if a key exists in the Trie
 3: complete: Get all keys that start with a prefix
 4: keys: Get all keys in the Trie
+5: reset: Reset the trie
 
 For example, if you wanted to send a request to insert `foo` into the Trie,
 the body would be `0foo`. If you wanted to list all the keys in the tree,
