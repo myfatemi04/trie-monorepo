@@ -1,8 +1,10 @@
-const protocol = require('./protocol');
-const display = require('./display');
-const fetch = require('node-fetch');
-const chalk = require('chalk');
-const assemble = require('./assemble');
+#!/usr/bin/env node
+
+import { insert, delete_, exists, complete, keys } from './protocol';
+import display from './display';
+import fetch from 'node-fetch';
+import * as chalk from 'chalk';
+import assemble from './assemble';
 
 // args are:
 // [0] where node.exe is located
@@ -34,7 +36,7 @@ Commands:
 The key can be up to 256 characters.
 `;
 
-async function sendRequest(body) {
+async function sendRequest(body: string) {
 	const response = await fetch(ENDPOINT, {
 		method: 'POST',
 		body,
@@ -47,7 +49,12 @@ async function sendRequest(body) {
 	}
 }
 
-function assertKeyDefined(key) {
+/**
+ * Asserts that a key is defined. Otherwise, displays a message.
+ * @param key The value to check if defined.
+ * @returns True if the key is defined, false otherwise.
+ */
+function assertKeyDefined(key?: string) {
 	if (key === undefined) {
 		console.log(chalk.red`This command requires a key.`);
 		console.log(helptext);
@@ -57,14 +64,15 @@ function assertKeyDefined(key) {
 }
 
 /**
- *
- * @param {string} command command to run (insert | delete | exists | complete | keys)
- * @param {string | undefined} key
+ * Runs a command.
  */
-async function main(command, key) {
+async function main(
+	command: 'insert' | 'delete' | 'exists' | 'complete' | 'display' | string,
+	key?: string
+) {
 	if (command === 'insert') {
 		if (assertKeyDefined(key)) {
-			const result = await sendRequest(protocol.insert(key));
+			const result = await sendRequest(insert(key));
 			if (result) {
 				console.log('Inserted', chalk.green`${key}`);
 			} else {
@@ -73,7 +81,7 @@ async function main(command, key) {
 		}
 	} else if (command === 'delete') {
 		if (assertKeyDefined(key)) {
-			const result = await sendRequest(protocol.delete_(key));
+			const result = await sendRequest(delete_(key));
 			if (result) {
 				console.log('Deleted', chalk.green`${key}`);
 			} else {
@@ -82,7 +90,7 @@ async function main(command, key) {
 		}
 	} else if (command === 'exists') {
 		if (assertKeyDefined(key)) {
-			const result = await sendRequest(protocol.exists(key));
+			const result = await sendRequest(exists(key));
 			if (result) {
 				console.log(chalk.green`${key}`, 'exists.');
 			} else {
@@ -91,7 +99,7 @@ async function main(command, key) {
 		}
 	} else if (command === 'complete') {
 		if (assertKeyDefined(key)) {
-			const result = await sendRequest(protocol.complete(key));
+			const result: string[] = await sendRequest(complete(key));
 			if (result.length == 0) {
 				console.log(chalk.green`${key}`, 'is not a prefix.');
 			} else {
@@ -105,7 +113,7 @@ async function main(command, key) {
 			}
 		}
 	} else if (command === 'display') {
-		const depthFirstKeys = await sendRequest(protocol.keys());
+		const depthFirstKeys: string[] = await sendRequest(keys());
 		if (depthFirstKeys.length == 0) {
 			console.log(chalk.yellow`Trie is empty.`);
 		}

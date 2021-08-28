@@ -4,19 +4,19 @@ const CMD_EXISTS = 2;
 const CMD_COMPLETE = 3;
 const CMD_KEYS = 4;
 
-function insert(key) {
+function insert(key: string) {
 	return `${CMD_INSERT}${key}`;
 }
 
-function delete_(key) {
+function delete_(key: string) {
 	return `${CMD_DELETE}${key}`;
 }
 
-function exists(key) {
+function exists(key: string) {
 	return `${CMD_EXISTS}${key}`;
 }
 
-function complete(key) {
+function complete(key: string) {
 	return `${CMD_COMPLETE}${key}`;
 }
 
@@ -24,4 +24,4 @@ function keys() {
 	return `${CMD_KEYS}`;
 }
 
-module.exports = { insert, delete_, exists, complete, keys };
+export { insert, delete_, exists, complete, keys };

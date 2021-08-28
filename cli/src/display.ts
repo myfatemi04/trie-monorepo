@@ -1,4 +1,5 @@
-const chalk = require('chalk');
+import * as chalk from 'chalk';
+import { Trie } from './types';
 
 /**
  * Display a trie.
@@ -9,7 +10,7 @@ const chalk = require('chalk');
  *   baz
  * @param {{subtries: {[key: string]: typeof trie}, isEndOfWord: boolean}} trie
  */
-module.exports = function displayTrie(trie, preceding = '') {
+export default function displayTrie(trie: Trie, preceding = '') {
 	const tab = ' '.repeat(preceding.length);
 	const keys = Object.keys(trie.subtries).sort();
 	const suffix = keys.length > 0 ? ' ▾' : '';
@@ -25,4 +26,4 @@ module.exports = function displayTrie(trie, preceding = '') {
 		// For each subtrie, call this function recursively.
 		displayTrie(trie.subtries[key], preceding + key);
 	}
-};
+}

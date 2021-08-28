@@ -1,16 +1,22 @@
 {
 	"name": "trie-cli-myfatemi",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"main": "index.js",
 	"license": "MIT",
 	"dependencies": {
+		"@types/node-fetch": "^2.5.12",
 		"chalk": "^4.1.2",
 		"node-fetch": "^2.6.1"
 	},
 	"scripts": {
-		"start": "node ."
+		"start": "node ./bin/index.js",
+		"build": "tsc",
+		"install": "npm run build"
 	},
 	"bin": {
-		"trie-cli": "node ./index.js"
+		"trie-cli": "./bin/index.js"
+	},
+	"devDependencies": {
+		"typescript": "^4.4.2"
 	}
 }
