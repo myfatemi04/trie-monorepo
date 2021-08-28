@@ -32,7 +32,7 @@ Commands:
   ${triecli} ${param`exists`} ${param`<key>`}: checks if ${param`<key>`} exists
   ${triecli} ${param`complete`} ${param`<key>`}: returns all keys that start with ${param`<key>`}
   ${triecli} ${param`display`}: returns all keys in the trie
-	${triecli} ${param`reset`}: resets the trie
+  ${triecli} ${param`reset`}: resets the trie
 
 The key can be up to 256 characters.
 `;
@@ -160,7 +160,6 @@ async function main(
 
 main(command, key).catch((error: Error) => {
 	console.error('There was an error running the command.');
-	console.error(chalk.redBright(error.message));
-	console.error();
-	console.error('Command:' + chalk.greenBright(command));
+	console.error('Server message:', chalk.redBright(error.message));
+	console.error('Command:', chalk.greenBright(command));
 });
