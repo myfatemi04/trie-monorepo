@@ -36,6 +36,15 @@ Commands:
 The key can be up to 256 characters.
 `;
 
+/**
+ * Sends a request to the server.
+ *
+ * If the request fails, an error is thrown with the error message.
+ * Otherwise, the response is returned.
+ *
+ * @param body The body of the request.
+ * @returns A successful response body.
+ */
 async function sendRequest(body: string) {
 	const response = await fetch(ENDPOINT, {
 		method: 'POST',
@@ -64,7 +73,10 @@ function assertKeyDefined(key?: string) {
 }
 
 /**
- * Runs a command.
+ * Main driver for the CLI.
+ *
+ * Runs a command (insert, delete, exists, complete, display) and displays
+ * a help message if the command is not found.
  */
 async function main(
 	command: 'insert' | 'delete' | 'exists' | 'complete' | 'display' | string,

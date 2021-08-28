@@ -3,11 +3,20 @@ import { Trie } from './types';
 
 /**
  * Display a trie.
+ *
+ * This displays the key leading to the trie along with all subtries.
+ * If this trie marks the end of the word, it is highlighted in green.
+ * Otherwise, it is highlighted in yellow.
+ *
+ * If the trie has subtries, a down arrow is displayed next to the key.
+ *
  * Example trie containing "bar" and "baz":
- * b
- *  ba
- *   bar
- *   baz
+ * ```
+ * b ▾
+ *  ba ▾
+ *   bar (green)
+ *   baz (green)
+ * ```
  * @param {{subtries: {[key: string]: typeof trie}, isEndOfWord: boolean}} trie
  */
 export default function displayTrie(trie: Trie, preceding = '') {
