@@ -10,10 +10,9 @@ import (
 func main() {
 	logger.Init("trie", true, false, os.Stdout)
 
-	port := os.Getenv("PORT")
-	if port == "" {
-		logger.Fatalln("$PORT must be set")
-		return
+	port, exists := os.LookupEnv("PORT")
+	if port == "" || !exists {
+		port = "8080"
 	}
 
 	server := NewServer()
