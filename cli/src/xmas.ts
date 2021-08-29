@@ -34,6 +34,4 @@ const generateChristmasTree = (halfWidths: number[]) => {
 
 const christmasTree = generateChristmasTree(halfWidths);
 
-console.log(christmasTree);
-
 export default christmasTree;
