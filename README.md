@@ -5,11 +5,17 @@ Michael Fatemi
 This code allows people to host a global set of keys as a Trie data structure.
 The Trie can be searched for keys beginning with a certain prefix.
 
+It includes a minimal yet powerful testing framework and an intuitive, colorful CLI.
+
 ## Hosting
 
 How is the Trie hosted?
 
-The Trie server is written in Go. It is hosted on an EC2 machine on Amazon Web Services.
+The Trie server is written in Go. It is hosted as a service on an EC2 machine on Amazon Web Services. I put it in a security group with public HTTP access and SSH access from my personal computer.
+
+I wanted something minimal compared to Docker, so I set up the server manually with Linux services.
+
+I had no idea how to do this, so I did some digging and found [this article](https://www.shubhamdipt.com/blog/how-to-create-a-systemd-service-in-linux/). It took some debugging, but I was finally able to get a service running.
 
 ## CLI <--> Server
 
