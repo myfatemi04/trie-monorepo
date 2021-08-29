@@ -9,6 +9,9 @@ Update a global Trie from the command line. The possibilities are endless!
 - `trie-cli exists <key>`: checks if <key> exists
 - `trie-cli complete <key>`: returns all keys that start with <key>
 - `trie-cli display`: returns all keys in the trie
+- `trie-cli reset`: resets the trie
+- `trie-cli test <test filename>`: tests the trie server. More information below.
+- `trie-cli xmas`: xmas trie
 
 Example:
 

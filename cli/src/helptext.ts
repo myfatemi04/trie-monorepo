@@ -17,6 +17,7 @@ Commands:
   ${triecli} ${param`display`}: returns all keys in the trie
   ${triecli} ${param`reset`}: resets the trie
   ${triecli} ${param`test`} ${param`<filename>`}: runs the test file ${param`<filename>`}
+  ${triecli} ${param`xmas`}: displays a christmas "trie"
 Testing files:
   Each test case is separated by a blank line.
   The first line of each test case is the command to run.

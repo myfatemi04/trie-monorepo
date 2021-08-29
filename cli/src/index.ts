@@ -6,6 +6,7 @@ import display from './display';
 import { helptext } from './helptext';
 import { complete, exists, insert, keys as keys_, remove, reset } from './ops';
 import test from './test';
+import christmasTree from './xmas';
 
 // args are:
 // [0] where node.exe is located
@@ -137,6 +138,8 @@ if (command === 'test') {
 			console.error('Test file:', chalk.greenBright(arg));
 		});
 	}
+} else if (command === 'xmas') {
+	console.log(christmasTree);
 } else {
 	run(command, arg, false).catch((error: Error) => {
 		console.error('There was an error running the command.');
