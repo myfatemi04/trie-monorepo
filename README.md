@@ -17,6 +17,16 @@ I wanted something minimal compared to Docker, so I set up the server manually w
 
 I had no idea how to do this, so I did some digging and found [this article](https://www.shubhamdipt.com/blog/how-to-create-a-systemd-service-in-linux/). It took some debugging, but I was finally able to get a service running.
 
+## Command-Line Interface (CLI)
+
+How do I install the CLI?
+
+### `npm install trie-cli-myfatemi04`
+
+How do I use the CLI?
+
+For the most up-to-date information about how to use the CLI, check out the `README.md` in the `cli/` folder.
+
 ## CLI <--> Server
 
 How does the CLI interact with the server?
@@ -50,12 +60,6 @@ When the server sends the response, the response body will either begin with `s`
 For a "success" response, the response body will be `s` and then a JSON string containing either a string or list of strings.
 
 For an "error" response, the response body will be `e` with the error message immediately following.
-
-## CLI Usage
-
-How do I use the CLI?
-
-For more information about how to use the CLI, check out the `README.md` in the `cli/` folder.
 
 ## Server
 
